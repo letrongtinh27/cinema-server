@@ -56,7 +56,7 @@ public class ShowTimeController {
                     s.setMovieId(shows.getMovieId());
                     s.setRoom(shows.getRoom());
                     s.setTheatreId(shows.getTheatreId());
-                    s.setStart_time(shows.getStart_time().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm")));
+                    s.setStart_time(shows.getStart_time().toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")));
                     s.setStatus(shows.getStatus());
 
                     if(now.isBefore(shows.getStart_time())) {
