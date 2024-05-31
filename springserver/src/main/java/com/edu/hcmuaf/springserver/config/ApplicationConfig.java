@@ -54,7 +54,7 @@ public class ApplicationConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOriginPattern("*");
-       config.addAllowedOrigin("https://cinema-945d3.web.app"); // Cho phép yêu cầu từ domain này
+        config.addAllowedOrigin("https://cinema-945d3.web.app/"); // Cho phép yêu cầu từ domain này
 //        config.addAllowedOrigin("http://localhost:5173"); // Cho phép yêu cầu từ domain này
 
 

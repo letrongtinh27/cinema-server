@@ -32,4 +32,6 @@ public class TicketService {
     public List<Ticket> findTicketsByUserId(int userId) {
         return ticketRepository.findTicketsByUserId((long) userId);
     }
+
+    public void deleteTicket(long id) {ticketRepository.deleteById(id);}
 }

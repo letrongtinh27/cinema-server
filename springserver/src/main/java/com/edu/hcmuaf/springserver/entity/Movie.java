@@ -2,7 +2,6 @@ package com.edu.hcmuaf.springserver.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.util.List;
@@ -34,6 +33,4 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
-
-
 }

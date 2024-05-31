@@ -48,10 +48,13 @@ public class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/api/users/**")
                                 .permitAll()
+                                .requestMatchers("/api/movie_category/**")
+                                .permitAll()
                                 .requestMatchers("/api/tickets/**")
                                 .permitAll()
                                 .requestMatchers("/api/auth/login/**", "/api/auth/register/**")
                                 .permitAll()
+
 //                                .requestMatchers("/api/users/**").hasAnyAuthority("user")
                                 .requestMatchers("/api/shows/**").hasAnyAuthority("user")
                                 .requestMatchers("/api/auth/**").hasAnyAuthority("user")

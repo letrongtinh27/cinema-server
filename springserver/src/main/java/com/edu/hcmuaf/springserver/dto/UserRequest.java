@@ -27,7 +27,6 @@ public class UserRequest {
     @Setter
     @ToString
     public static class CreateUser {
-        private int id;
         private String username;
         private String fullName;
         private String email;
@@ -35,5 +34,6 @@ public class UserRequest {
         private String gender;
         private String birthday;
         private String password;
+        private String role;
     }
 }

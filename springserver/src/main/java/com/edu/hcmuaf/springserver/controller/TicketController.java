@@ -44,10 +44,10 @@ public class TicketController {
         return null;
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTicket() { 
-// sửa lại
-        return null;
-    } 
+    public ResponseEntity<?> deleteTicket(long id) {
+        ticketService.deleteTicket(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 

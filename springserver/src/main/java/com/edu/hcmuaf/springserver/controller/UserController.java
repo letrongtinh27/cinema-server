@@ -1,5 +1,7 @@
 package com.edu.hcmuaf.springserver.controller;
 
+import com.edu.hcmuaf.springserver.auth.AuthenticationResponse;
+import com.edu.hcmuaf.springserver.auth.RegisterAdminRequest;
 import com.edu.hcmuaf.springserver.dto.UserRequest;
 import com.edu.hcmuaf.springserver.dto.UserResponse;
 import com.edu.hcmuaf.springserver.entity.User;
@@ -51,20 +53,37 @@ public class UserController {
         } else return ResponseEntity.badRequest().body(null);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable int id) {
+        User user = userService.findUserById(id);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else return ResponseEntity.badRequest().body(null);
+    }
+
     @PostMapping("/edit")
     public ResponseEntity<?> updateUser(@RequestBody UserRequest.EditUser userRequest, Authentication authentication) throws ParseException {
         boolean update = userService.updateUser(userRequest);
-        System.out.println(userRequest);
-//        boolean update = true
         if(update) {
             return getProfile(authentication);
         }
         return ResponseEntity.badRequest().build();
     }
 
-    @PutMapping("/admin_create")
-    public ResponseEntity<?> createUser(@RequestBody UserRequest.CreateUser user) throws ParseException {
-        userService.createUser(user);
-        return  ResponseEntity.badRequest().build();
+    @PostMapping ("/admin_create")
+    public ResponseEntity<?> createUser(@RequestBody RegisterAdminRequest adminRequest) throws ParseException {
+//        User user1 = userService.createUser(user);
+//        return  ResponseEntity.ok(user1);
+        AuthenticationResponse authenticationResponse = userService.createUser(adminRequest);
+        if(authenticationResponse != null) {
+            return ResponseEntity.ok(authenticationResponse);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteUser(@PathVariable long id) {
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -25,30 +25,26 @@ public class ShowTimeService {
     }
 
     public ShowTime getShowTimeById(int id) {
-        return showTimeRepository.findById(Long.valueOf(id)).orElse(null);
+        return showTimeRepository.findById((long) id).orElse(null);
     }
 
     public ShowTime updateShowTime(int id,ShowTime showTime) {
-        ShowTime existShowTime = showTimeRepository.findShowTimesById(id).orElseThrow(() -> new IllegalArgumentException("not found"));
-        existShowTime.setMovieId(showTime.getMovieId());
+        ShowTime existShowTime = showTimeRepository.findById((long) id).orElseThrow(() -> new IllegalArgumentException("not found"));
+        return getShowTime(showTime, existShowTime);
+    }
+
+    private ShowTime getShowTime(ShowTime showTime, ShowTime existShowTime) {
+        existShowTime.setMovie(showTime.getMovie());
         existShowTime.setRoom(showTime.getRoom());
-        existShowTime.setTheatreId(showTime.getTheatreId());
+        existShowTime.setTheatre(showTime.getTheatre());
         existShowTime.setStart_time(showTime.getStart_time());
         existShowTime.setEnd_time(showTime.getEnd_time());
         existShowTime.setStatus(showTime.getStatus());
-        existShowTime.setMovie_st(showTime.getMovie_st());
         return showTimeRepository.save(existShowTime);
     }
 
     public ShowTime createShowTime(ShowTime showTime) {
-        showTime.setMovieId(showTime.getMovieId());
-        showTime.setRoom(showTime.getRoom());
-        showTime.setTheatreId(showTime.getTheatreId());
-        showTime.setStart_time(showTime.getStart_time());
-        showTime.setEnd_time(showTime.getEnd_time());
-        showTime.setStatus(showTime.getStatus());
-        showTime.setMovie_st(showTime.getMovie_st());
-        return showTimeRepository.save(showTime);
+        return getShowTime(showTime, showTime);
     }
 
     public void deleteShowTime(long id) {

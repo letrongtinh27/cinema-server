@@ -21,8 +21,6 @@ public class EmailService {
     private JavaMailSender javaMailSender;
     @Autowired
     private TemplateEngine templateEngine;
-    @Autowired
-    private MovieService movieService;
 
     public void sendHtmlEmail(String to, Ticket ticket) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -32,8 +30,7 @@ public class EmailService {
 
         Context context = new Context();
 
-        System.out.println(ticket);
-        context.setVariable("movieName", movieService.getMovieById(ticket.getShowTime().getMovieId()).getTitle());
+        context.setVariable("movieName", ticket.getShowTime().getMovie().getTitle());
         context.setVariable("code", ticket.getTicketCode());
 
         LocalDateTime date = ticket.getShowTime().getStart_time();

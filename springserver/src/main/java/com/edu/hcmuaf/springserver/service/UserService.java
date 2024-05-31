@@ -2,6 +2,7 @@ package com.edu.hcmuaf.springserver.service;
 
 import com.edu.hcmuaf.springserver.auth.AuthenticationRequest;
 import com.edu.hcmuaf.springserver.auth.AuthenticationResponse;
+import com.edu.hcmuaf.springserver.auth.RegisterAdminRequest;
 import com.edu.hcmuaf.springserver.auth.RegisterRequest;
 import com.edu.hcmuaf.springserver.dto.UserRequest;
 import com.edu.hcmuaf.springserver.entity.User;
@@ -116,19 +117,27 @@ public class UserService {
         return false;
     }
 
-    public User createUser(UserRequest.CreateUser userRequest) throws ParseException {
-        User user = userRepository.findByUsername(userRequest.getUsername()).orElse(null);
-
+    public AuthenticationResponse createUser(RegisterAdminRequest adminRequest) throws ParseException {
+        if (userRepository.existsUserByUsername(adminRequest.getUsername()) || userRepository.existsUserByEmail(adminRequest.getEmail())) {
+            return AuthenticationResponse.builder().code(400).message("Username or email already exists").build();
+        }
+        User user = new User();
         user.setEmail(user.getEmail());
         user.setUsername(user.getUsername());
         user.setBirthday(user.getBirthday());
         user.setGender(user.getGender());
         user.setRole(user.getRole());
         user.setFull_name(user.getFull_name());
-        user.setPassword(encoder.encode(userRequest.getPassword()));
+        user.setPassword(encoder.encode(user.getPassword()));
         user.setPhone_number(user.getPhone_number());
-        return userRepository.save(user);
+        userRepository.save(user);
+        return AuthenticationResponse.builder().code(200).message("Create admin success").build();
     }
 
+    public User findUserById(int id) {
+        return userRepository.findUsersById(id);
+    }
+
+    public void deleteById(long id) { userRepository.deleteById(id);}
 }
 
