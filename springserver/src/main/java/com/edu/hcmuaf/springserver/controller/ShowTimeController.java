@@ -72,7 +72,6 @@ public class ShowTimeController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getShowTimeById(@PathVariable int id) {
         Optional<ShowTime> showTime = Optional.ofNullable(showTimeService.getShowTimeById(id));
-        System.out.println("showtime: " + showTime);
         if (showTime.isPresent()) {
             return ResponseEntity.ok(showTime);
         }
@@ -92,7 +91,7 @@ public class ShowTimeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateShowTime(@RequestBody ShowTime showTime, @PathVariable int id) {
+    public ResponseEntity<?> updateShowTime(@RequestBody ShowTime showTime, @PathVariable int id) {
         return ResponseEntity.ok(showTimeService.updateShowTime(id, showTime));
     }
 }

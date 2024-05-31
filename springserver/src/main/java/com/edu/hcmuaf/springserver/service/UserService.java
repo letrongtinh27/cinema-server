@@ -117,19 +117,19 @@ public class UserService {
         return false;
     }
 
-    public AuthenticationResponse createUser(RegisterAdminRequest adminRequest) throws ParseException {
+    public AuthenticationResponse createUser(RegisterAdminRequest adminRequest) {
         if (userRepository.existsUserByUsername(adminRequest.getUsername()) || userRepository.existsUserByEmail(adminRequest.getEmail())) {
             return AuthenticationResponse.builder().code(400).message("Username or email already exists").build();
         }
         User user = new User();
-        user.setEmail(user.getEmail());
-        user.setUsername(user.getUsername());
-        user.setBirthday(user.getBirthday());
-        user.setGender(user.getGender());
-        user.setRole(user.getRole());
-        user.setFull_name(user.getFull_name());
-        user.setPassword(encoder.encode(user.getPassword()));
-        user.setPhone_number(user.getPhone_number());
+        user.setEmail(adminRequest.getEmail());
+        user.setUsername(adminRequest.getUsername());
+        user.setBirthday(adminRequest.getBirthday());
+        user.setGender(adminRequest.getGender());
+        user.setRole(adminRequest.getRole());
+        user.setFull_name(adminRequest.getFull_name());
+        user.setPassword(encoder.encode(adminRequest.getPassword()));
+        user.setPhone_number(adminRequest.getPhone_number());
         userRepository.save(user);
         return AuthenticationResponse.builder().code(200).message("Create admin success").build();
     }
