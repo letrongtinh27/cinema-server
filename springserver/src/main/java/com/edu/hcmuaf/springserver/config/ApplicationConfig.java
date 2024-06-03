@@ -53,8 +53,9 @@ public class ApplicationConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOriginPattern("*");
         config.addAllowedOrigin("https://cinema-945d3.web.app/"); // Cho phép yêu cầu từ domain này
+        config.addAllowedOriginPattern("*");
+
 //        config.addAllowedOrigin("http://localhost:5173"); // Cho phép yêu cầu từ domain này
 
 
