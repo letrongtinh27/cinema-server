@@ -1,21 +1,16 @@
 package com.edu.hcmuaf.springserver.controller;
 
-import com.edu.hcmuaf.springserver.dto.ShowsResponse;
-import com.edu.hcmuaf.springserver.entity.Movie;
+import com.edu.hcmuaf.springserver.dto.response.ShowsResponse;
 import com.edu.hcmuaf.springserver.entity.ShowTime;
-import com.edu.hcmuaf.springserver.entity.Theatre;
 import com.edu.hcmuaf.springserver.service.ShowTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.DateFormatter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,6 +67,7 @@ public class ShowTimeController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getShowTimeById(@PathVariable int id) {
         Optional<ShowTime> showTime = Optional.ofNullable(showTimeService.getShowTimeById(id));
+        System.out.println("showtime: " + showTime);
         if (showTime.isPresent()) {
             return ResponseEntity.ok(showTime);
         }

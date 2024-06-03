@@ -19,8 +19,9 @@ public class Theatre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long location_id;
+    @OneToOne
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;
     private String name;
     private String address;
     private String phone_number;
@@ -29,10 +30,4 @@ public class Theatre {
     private Long room_summary;
     private Time opening_hours;
     private Long rooms;
-
-    @OneToOne
-    @JoinTable(name = "location",
-            joinColumns = @JoinColumn(name = "location_id"),
-            inverseJoinColumns = @JoinColumn(name = "id"))
-    private Location location;
 }

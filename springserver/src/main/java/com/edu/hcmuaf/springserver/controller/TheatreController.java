@@ -1,5 +1,6 @@
 package com.edu.hcmuaf.springserver.controller;
 
+import com.edu.hcmuaf.springserver.dto.request.TheatreRequest;
 import com.edu.hcmuaf.springserver.entity.Theatre;
 import com.edu.hcmuaf.springserver.service.TheatreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +38,15 @@ public class TheatreController {
         return ResponseEntity.badRequest().body(null);
     }
 
-
-
     @PostMapping("/")
-    public ResponseEntity<?> createTheatre(@RequestBody Theatre theatre) {
-        System.out.println(theatre);
-        return ResponseEntity.ok(theatreService.createTheatre(theatre));
+    public ResponseEntity<?> createTheatre(@RequestBody TheatreRequest theatreRequest) {
+        System.out.println(theatreRequest);
+        return ResponseEntity.ok(theatreService.createTheatre(theatreRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTheatre(@RequestBody Theatre theatre,@PathVariable int id) {
-        return ResponseEntity.ok(theatreService.updateTheatre(theatre, id));
+    public ResponseEntity<?> updateTheatre(@RequestBody TheatreRequest theatreRequest,@PathVariable int id) {
+        return ResponseEntity.ok(theatreService.updateTheatre(theatreRequest, id));
     }
 
     @DeleteMapping("/{id}")

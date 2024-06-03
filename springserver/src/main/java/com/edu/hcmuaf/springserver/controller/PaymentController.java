@@ -2,8 +2,8 @@ package com.edu.hcmuaf.springserver.controller;
 
 
 import com.edu.hcmuaf.springserver.config.VNPayConfig;
-import com.edu.hcmuaf.springserver.dto.PaymentRequest;
-import com.edu.hcmuaf.springserver.dto.PaymentResponse;
+import com.edu.hcmuaf.springserver.dto.request.PaymentRequest;
+import com.edu.hcmuaf.springserver.dto.response.PaymentResponse;
 import com.edu.hcmuaf.springserver.entity.Reservation;
 import com.edu.hcmuaf.springserver.entity.Seat;
 import com.edu.hcmuaf.springserver.entity.Ticket;
@@ -68,9 +68,9 @@ public class PaymentController {
                     return ResponseEntity.badRequest().body(new PaymentResponse(HttpServletResponse.SC_BAD_REQUEST, "Chỗ ngồi đã được đặt",null));
                 } else {
                     Reservation reservation = new Reservation();
-                    reservation.setUser_id(user.getId());
-                    reservation.setShow_time_id(paymentRequest.getShowTimeId());
-                    reservation.setSeat_id(paymentRequest.getListSeatId().get(i));
+                    reservation.setUser(user);
+                    reservation.setShowTime(showTimeService.getShowTimeById(paymentRequest.getShowTimeId()));
+                    reservation.setSeat(seatService.getSeatById(paymentRequest.getListSeatId().get(i)));
                     reservation.setOrder(vnp_TxnRef);
                     reservation.setPhone_number(user.getPhone_number());
                     reservation.setEmail(user.getEmail());
@@ -139,12 +139,12 @@ public class PaymentController {
                 //Build hash data
                 hashData.append(fieldName);
                 hashData.append('=');
-                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
 
                 //Build query
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII));
                 query.append('=');
-                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
                 if (itr.hasNext()) {
                     query.append('&');
                     hashData.append('&');
@@ -173,8 +173,8 @@ public class PaymentController {
                     reservation.setPayment("Thanh toán thành công");
 
                     Ticket ticket = new Ticket();
-                    ticket.setShowTime(showTimeService.getShowTimeById(reservation.getShow_time_id()));
-                    Seat seat = seatService.getSeatById(reservation.getSeat_id());
+                    ticket.setShowTime(reservation.getShowTime());
+                    Seat seat = reservation.getSeat();
                     ticket.setSeat(seat);
                     ticket.setReservation(reservation);
                     ticket.setPrice(seat!=null?seat.getPrice():0);

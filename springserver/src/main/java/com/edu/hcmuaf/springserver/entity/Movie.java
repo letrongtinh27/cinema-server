@@ -29,7 +29,7 @@ public class Movie {
     private String type;
 
     @OneToMany (fetch = FetchType.LAZY)
-    @JoinTable(name = "movie_category",
+    @JoinTable(name = "movie_categories",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;

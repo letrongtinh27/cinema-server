@@ -1,10 +1,9 @@
 package com.edu.hcmuaf.springserver.controller;
 
-import com.edu.hcmuaf.springserver.dto.TicketResponse;
+import com.edu.hcmuaf.springserver.dto.response.TicketResponse;
 import com.edu.hcmuaf.springserver.entity.Ticket;
 import com.edu.hcmuaf.springserver.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -17,7 +17,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     boolean existsByShowTimeIdAndSeatId(Long showTime_id, int seat_id);
     Optional<Ticket> findTicketByTicketCode(String ticketCode);
 
-    @Query("SELECT t FROM Ticket t JOIN t.reservation r WHERE r.user_id = :userId")
+    @Query("SELECT t FROM Ticket t JOIN t.reservation r WHERE r.user.id = :userId")
     List<Ticket> findTicketsByUserId(Long userId);
 
 

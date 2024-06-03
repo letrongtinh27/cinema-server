@@ -12,14 +12,20 @@ import java.util.Date;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(name = "reservation")
+@Table(name = "reservations")
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int user_id;
-    private int show_time_id;
-    private int seat_id;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    @OneToOne
+    @JoinColumn(name = "show_time_id", nullable = false)
+    private ShowTime showTime;
+    @OneToOne
+    @JoinColumn(name = "seat_id", nullable = false)
+    private Seat seat;
     @Column(name = "code_order")
     private String order;
     private String phone_number;

@@ -14,7 +14,9 @@ public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Long theatre_id;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "theatre_id", referencedColumnName = "id")
+    private Theatre theatre;
     private char row_char;
     private int seat_number;
     private String room;

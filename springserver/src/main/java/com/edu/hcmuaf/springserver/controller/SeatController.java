@@ -1,6 +1,6 @@
 package com.edu.hcmuaf.springserver.controller;
 
-import com.edu.hcmuaf.springserver.dto.SeatResponse;
+import com.edu.hcmuaf.springserver.dto.response.SeatResponse;
 import com.edu.hcmuaf.springserver.service.ReservationService;
 import com.edu.hcmuaf.springserver.service.SeatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,8 @@ public class SeatController {
     @GetMapping("/get/{showTimeId}/{theatreId}/{room}")
     public ResponseEntity<List<SeatResponse>> getSeatsByShowTime(@PathVariable("showTimeId") int showTimeId, @PathVariable("theatreId") int theatreId, @PathVariable("room") int room) {
         List<SeatResponse> seats = seatService.getSeatsByShowTime(showTimeId, theatreId, room);
+
+        System.out.println(seatService.getSeatById(2));
 
         Map<Integer, SeatResponse> idMap = new HashMap<>();
 

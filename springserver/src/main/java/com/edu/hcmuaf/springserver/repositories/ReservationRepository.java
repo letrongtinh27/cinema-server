@@ -1,6 +1,5 @@
 package com.edu.hcmuaf.springserver.repositories;
 
-import com.edu.hcmuaf.springserver.dto.SeatResponse;
 import com.edu.hcmuaf.springserver.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 

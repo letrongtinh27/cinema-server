@@ -1,4 +1,4 @@
-package com.edu.hcmuaf.springserver.dto;
+package com.edu.hcmuaf.springserver.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

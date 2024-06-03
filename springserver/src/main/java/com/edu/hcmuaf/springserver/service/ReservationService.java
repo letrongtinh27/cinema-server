@@ -1,13 +1,10 @@
 package com.edu.hcmuaf.springserver.service;
 
-import com.edu.hcmuaf.springserver.dto.PaymentRequest;
-import com.edu.hcmuaf.springserver.dto.SeatResponse;
 import com.edu.hcmuaf.springserver.entity.Reservation;
 import com.edu.hcmuaf.springserver.repositories.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service

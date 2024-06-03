@@ -1,4 +1,4 @@
-package com.edu.hcmuaf.springserver.dto;
+package com.edu.hcmuaf.springserver.dto.request;
 
 import lombok.*;
 
