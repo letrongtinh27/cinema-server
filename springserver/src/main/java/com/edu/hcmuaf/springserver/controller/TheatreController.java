@@ -4,6 +4,7 @@ import com.edu.hcmuaf.springserver.dto.request.TheatreRequest;
 import com.edu.hcmuaf.springserver.entity.Theatre;
 import com.edu.hcmuaf.springserver.service.TheatreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,8 +18,6 @@ public class TheatreController {
     @Autowired
     private TheatreService theatreService;
 
-    @Autowired
-    HttpServletRequest request;
 
     @GetMapping("/all")
     public ResponseEntity<?> getListTheatre() {
@@ -53,5 +52,15 @@ public class TheatreController {
     public ResponseEntity<Void> deleteTheatre(@PathVariable long id) {
         theatreService.deleteTheatreById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Theatre>> getAll(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "{}") String filter,
+                                                        @RequestParam(defaultValue = "16") int perPage,
+                                                        @RequestParam(defaultValue = "name") String sort,
+                                                        @RequestParam(defaultValue = "DESC") String order) {
+        Page<Theatre> theatres = theatreService.getAllwithSort(filter, page, perPage, sort, order);
+        return ResponseEntity.ok(theatres);
     }
 }

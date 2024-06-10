@@ -27,6 +27,7 @@ public class Movie {
     private String sub_title;
     private String age_type;
     private String type;
+    private int is_active;
 
     @OneToMany (fetch = FetchType.LAZY)
     @JoinTable(name = "movie_categories",

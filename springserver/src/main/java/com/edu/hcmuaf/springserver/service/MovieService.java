@@ -3,15 +3,20 @@ package com.edu.hcmuaf.springserver.service;
 import com.edu.hcmuaf.springserver.entity.Category;
 import com.edu.hcmuaf.springserver.entity.Movie;
 import com.edu.hcmuaf.springserver.entity.MovieCategory;
-import com.edu.hcmuaf.springserver.repositories.CategoryRepository;
 import com.edu.hcmuaf.springserver.repositories.MovieCategoryRepository;
 import com.edu.hcmuaf.springserver.repositories.MovieRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class MovieService {
@@ -77,6 +82,39 @@ public class MovieService {
             }
         }
         return existMovie;
+    }
+
+    public Page<Movie> getAllwithSort(String filter, int page, int perPage, String sortBy, String order) {
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (order.equalsIgnoreCase("DESC"))
+            direction = Sort.Direction.DESC;
+
+        JsonNode filterJson;
+        try {
+            filterJson = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        Specification<Movie> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            if (filterJson.has("q")) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("title"), "%" + filterJson.get("q").asText().toLowerCase() + "%"));
+            }
+            if (filterJson.has("title")) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("title"), "%" + filterJson.get("title").asText() + "%"));
+            }
+            if (filterJson.has("type")) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("type"), "%" + filterJson.get("type").asText() + "%"));
+            }
+            return predicate;
+        };
+        if (sortBy.equals("title")) {
+            return movieRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
+        }
+        if (sortBy.equals("type"))  {
+            return movieRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "type")));
+        }
+        return movieRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, sortBy)));
     }
 
 }

@@ -22,6 +22,7 @@ public class Theatre {
     @OneToOne
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
+    private String image;
     private String name;
     private String address;
     private String phone_number;

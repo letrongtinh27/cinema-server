@@ -6,12 +6,13 @@ import com.edu.hcmuaf.springserver.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,22 +22,16 @@ public class JwtService {
     private static final int tokenExpirationTime = 50*60*1000;
 
     public String generateToken(User user, Collection<SimpleGrantedAuthority> authorities) {
+        // Thêm thông tin cần thiết vào token
+
         Algorithm algorithm = Algorithm.HMAC256(Secret_key.getBytes());
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + tokenExpirationTime))
-                .withClaim("role", user.getRole())
+                .withClaim("role", authorities.stream().toList().get(0).getAuthority())
                 .sign(algorithm);
     }
 
-    public String generateRefreshToken(User user, Collection<SimpleGrantedAuthority> authorities) {
-        Algorithm algorithm = Algorithm.HMAC256(Secret_key.getBytes());
-        return JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 50*60*1000))
-                .withClaim("role", user.getRole())
-                .sign(algorithm);
-    }
     public String extractTokenFromHeader(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {

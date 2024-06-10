@@ -17,7 +17,7 @@ import java.util.List;
 public class CategoryController {
     @Autowired
     CategoryService categoryService;
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<?> getListCategory() {
         List<Category> listCategory = categoryService.getAllCategory();
         if(listCategory != null) {

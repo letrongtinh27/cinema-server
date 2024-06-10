@@ -2,6 +2,9 @@ package com.edu.hcmuaf.springserver.repositories;
 
 import com.edu.hcmuaf.springserver.entity.ShowTime;
 import com.edu.hcmuaf.springserver.entity.Ticket;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,5 +23,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT t FROM Ticket t JOIN t.reservation r WHERE r.user.id = :userId")
     List<Ticket> findTicketsByUserId(Long userId);
 
+    Page<Ticket> findAll(Specification<Ticket> specification, Pageable pageable);
 
 }

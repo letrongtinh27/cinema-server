@@ -20,4 +20,5 @@ public class SeatResponse {
     private Date expired_time;
     private String payment;
     private boolean isBooked;
+    private int status;
 }

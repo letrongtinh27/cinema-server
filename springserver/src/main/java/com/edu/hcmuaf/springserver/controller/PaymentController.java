@@ -44,7 +44,7 @@ public class PaymentController {
     private EmailService emailService;
 
     @PostMapping("/pay")
-    public ResponseEntity<?> createPay(@RequestBody PaymentRequest paymentRequest, HttpServletRequest req, Authentication authentication) throws UnsupportedEncodingException {
+    public ResponseEntity<?> createPay(@RequestBody PaymentRequest paymentRequest, HttpServletRequest req, Authentication authentication) throws UnsupportedEncodingException, MessagingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -65,6 +65,7 @@ public class PaymentController {
             Calendar calendar = Calendar.getInstance();
             for (int i = 0; i < paymentRequest.getAmount(); i++) {
                 if (ticketService.checkExistTicket(paymentRequest.getShowTimeId(), paymentRequest.getListSeatId().get(i))) {
+                    emailService.sendTextEmail(user.getEmail(),"Kết quả đặt vé","Chỗ ngồi đã được đặt, chúng tôi xin lỗi vì điều đó. Xin hãy đặt ghế ngồi khác, xin cảm ơn!");
                     return ResponseEntity.badRequest().body(new PaymentResponse(HttpServletResponse.SC_BAD_REQUEST, "Chỗ ngồi đã được đặt",null));
                 } else {
                     Reservation reservation = new Reservation();
