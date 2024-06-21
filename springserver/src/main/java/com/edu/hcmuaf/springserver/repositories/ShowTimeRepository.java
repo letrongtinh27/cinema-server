@@ -16,4 +16,5 @@ public interface ShowTimeRepository extends JpaRepository<ShowTime, Long> {
     Optional<List<ShowTime>> findShowTimeByMovieIdAndTheatreId(int movieId, int theatreId);
 
     Page<ShowTime> findAll(Specification<ShowTime> specification, Pageable pageable);
+    List<ShowTime> findAll(Specification<ShowTime> specification);
 }

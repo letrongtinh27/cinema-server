@@ -15,7 +15,7 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
 
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<?> getListLocation() {
         List<Location> getListLocation = locationService.getListLocation();
         if (getListLocation != null) {

@@ -17,8 +17,8 @@ import javax.crypto.spec.SecretKeySpec;
 import jakarta.servlet.http.HttpServletRequest;
 public class VNPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        public static String vnp_ReturnUrl = "http://localhost:3000/payment-callback";
-//    public static String vnp_ReturnUrl = "https://cinema-945d3.web.app/payment-callback";
+
+    public static String vnp_ReturnUrl = "https://cinema-945d3.web.app/payment-callback";
     public static String vnp_TmnCode = "T7Q9NUPQ";
     public static String secretKey = "G7Y9IJ7KNF96XVXE3ABVYTP08PJM489B";
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";

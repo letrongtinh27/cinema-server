@@ -7,8 +7,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TheatreRepository extends JpaRepository<Theatre, Long> {
     Theatre findOneById(int id);
     Page<Theatre> findAll(Specification<Theatre> specification, Pageable pageable);
+
 }

@@ -2,6 +2,7 @@ package com.edu.hcmuaf.springserver.service;
 
 import com.edu.hcmuaf.springserver.auth.*;
 import com.edu.hcmuaf.springserver.config.VNPayConfig;
+import com.edu.hcmuaf.springserver.controller.UserController;
 import com.edu.hcmuaf.springserver.dto.request.UserRequest;
 import com.edu.hcmuaf.springserver.entity.User;
 import com.edu.hcmuaf.springserver.repositories.UserRepository;
@@ -11,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +49,8 @@ public class UserService {
     private JwtService jwtService;
     @Autowired
     private EmailService emailService;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
 
     public List<User> getListUser() {
@@ -92,9 +97,8 @@ public class UserService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
             User user = userRepository.findByUsername(authenticationRequest.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-            System.out.println("user1: " + user);
 
-            if (isAdmin && !user.getRole().equals("admin")) {
+            if (isAdmin && (!user.getRole().equals("admin")) && (!user.getRole().equals("manager")) )  {
                 return AuthenticationResponse.builder().code(401).message("Not an admin").build();
             }
 
@@ -120,15 +124,24 @@ public class UserService {
         }
     }
 
-    public boolean updateUser(UserRequest.EditUser userRequest) throws ParseException {
+    public AuthenticationResponse updateUser(UserRequest.EditUser userRequest) throws ParseException {
 
         User user = userRepository.findByUsername(userRequest.getUsername()).orElse(null);
 
+        if (userRepository.existsUserByEmail(userRequest.getEmail())) {
+            logger.warn("Email {} already exists. Update failed.", userRequest.getEmail());
+            return AuthenticationResponse.builder().code(400).message("Địa chỉ email đã tồn tài, thử lại email khác.").build();
+        }
+
         if(user!=null) {
             if(userRequest.isChangePassword()) {
+                logger.info("Changed password for user: {}", user.getUsername());
                 user.setPassword(encoder.encode(userRequest.getPassword()));
             }
-            user.setEmail(userRequest.getEmail());
+            if(!userRequest.getEmail().isEmpty()){
+                user.setEmail(userRequest.getEmail());
+                logger.info("Updated email for user: {}", user.getUsername());
+            }
             user.setPhone_number(userRequest.getPhone());
             user.setFull_name(userRequest.getFullName());
             user.setGender(userRequest.getGender());
@@ -140,9 +153,9 @@ public class UserService {
 
             userRepository.save(user);
 
-            return true;
+            return AuthenticationResponse.builder().code(200).message("Cập nhật thông tin thành công!").build();
         }
-        return false;
+        return AuthenticationResponse.builder().code(400).message("Cập nhật thông tin thất bại!").build();
     }
 
     public AuthenticationResponse createUser(RegisterAdminRequest adminRequest) {
@@ -196,12 +209,6 @@ public class UserService {
             }
             return predicate;
         };
-        if (sortBy.equals("username")) {
-            return userRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "username")));
-        }
-        if (sortBy.equals("email"))  {
-            return userRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "email")));
-        }
         return userRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, sortBy)));
     }
 
@@ -216,6 +223,24 @@ public class UserService {
         emailService.sendTextEmail(user.getEmail(),"Mật khẩu mới","Mật khẩu mới của tài khoản: " + user.getUsername() + " là: " + newPassword);
 
         return AuthenticationResponse.builder().code(200).message("Reset password success").build();
+    }
+
+    public List<User> getAllUsersByRole(String filter) {
+        JsonNode filterJson;
+        try {
+            filterJson = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        Specification<User> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            if (filterJson.has("role")) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("role"), filterJson.get("role").asText()));
+            }
+            return predicate;
+        };
+        return userRepository.findAll(specification);
     }
 }
 

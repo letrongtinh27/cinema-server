@@ -2,9 +2,13 @@ package com.edu.hcmuaf.springserver.controller;
 
 import com.edu.hcmuaf.springserver.dto.response.ShowsResponse;
 import com.edu.hcmuaf.springserver.entity.ShowTime;
+import com.edu.hcmuaf.springserver.entity.User;
 import com.edu.hcmuaf.springserver.service.ShowTimeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,14 +25,12 @@ import java.util.Optional;
 public class ShowTimeController {
     @Autowired
     private ShowTimeService showTimeService;
+    private static final Logger logger = LoggerFactory.getLogger(ShowTimeController.class);
 
     @GetMapping("/all")
-    public ResponseEntity<?> getListShowTime() {
-        List<ShowTime> showTimeList = showTimeService.getAllShowTime();
-        if (showTimeList != null ) {
-            return ResponseEntity.ok(showTimeList);
-        }
-        return ResponseEntity.badRequest().body(null);
+    public ResponseEntity<List<ShowTime>> getAllShowWithFilter(@RequestParam(defaultValue = "{}") String filter) {
+        List<ShowTime> showTimes = showTimeService.getAllwithSortTime(filter);
+        return ResponseEntity.ok(showTimes);
     }
 
     @GetMapping("/get")
@@ -68,29 +70,48 @@ public class ShowTimeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getShowTimeById(@PathVariable int id) {
-        Optional<ShowTime> showTime = Optional.ofNullable(showTimeService.getShowTimeById(id));
-        System.out.println("showtime: " + showTime);
-        if (showTime.isPresent()) {
-            return ResponseEntity.ok(showTime);
+        try {
+            ShowTime showTime = showTimeService.getShowTimeById(id);
+            if (showTime != null) {
+                return ResponseEntity.ok(showTime);
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            logger.error("Error retrieving show time with id {}", id, e);
+            return ResponseEntity.badRequest().body("Error retrieving show time");
         }
-        return ResponseEntity.badRequest().body(null);
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteShowTime(@PathVariable long id) {
-        showTimeService.deleteShowTime(id);
-        return ResponseEntity.noContent().build();
+        try {
+            showTimeService.deleteShowTime(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            logger.error("Error deleting show time with id {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/")
     public ResponseEntity<?> createShowTime(@RequestBody ShowTime showTime) {
-        return ResponseEntity.ok(showTimeService.createShowTime(showTime));
+        try {
+            return ResponseEntity.ok(showTimeService.createShowTime(showTime));
+        } catch (Exception e) {
+            logger.error("Error creating show time", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating show time");
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateShowTime(@RequestBody ShowTime showTime, @PathVariable int id) {
-        return ResponseEntity.ok(showTimeService.updateShowTime(id, showTime));
+        try {
+            return ResponseEntity.ok(showTimeService.updateShowTime(id, showTime));
+        } catch (Exception e) {
+            logger.error("Error updating show time with id {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating show time");
+        }
     }
 
     @GetMapping
@@ -99,7 +120,12 @@ public class ShowTimeController {
                                                       @RequestParam(defaultValue = "16") int perPage,
                                                       @RequestParam(defaultValue = "movie.title") String sort,
                                                       @RequestParam(defaultValue = "DESC") String order) {
-        Page<ShowTime> showTimes = showTimeService.getAllwithSort(filter, page, perPage, sort, order);
-        return ResponseEntity.ok(showTimes);
+        try {
+            Page<ShowTime> showTimes = showTimeService.getAllwithSort(filter, page, perPage, sort, order);
+            return ResponseEntity.ok(showTimes);
+        } catch (Exception e) {
+            logger.error("Error retrieving all show times", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

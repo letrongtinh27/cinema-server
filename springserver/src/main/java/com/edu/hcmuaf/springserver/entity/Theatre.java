@@ -19,7 +19,7 @@ public class Theatre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
     private String image;

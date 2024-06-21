@@ -14,4 +14,5 @@ import java.util.List;
 public interface MovieRepository extends JpaRepository<Movie, Long> {
     Movie findOneById(int id);
     Page<Movie> findAll(Specification<Movie> specification, Pageable pageable);
+    List<Movie> findAll(Specification<Movie> specification);
 }

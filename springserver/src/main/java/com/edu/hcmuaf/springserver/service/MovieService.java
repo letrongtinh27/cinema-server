@@ -1,5 +1,6 @@
 package com.edu.hcmuaf.springserver.service;
 
+import com.edu.hcmuaf.springserver.dto.request.UpdateMovieRequest;
 import com.edu.hcmuaf.springserver.entity.Category;
 import com.edu.hcmuaf.springserver.entity.Movie;
 import com.edu.hcmuaf.springserver.entity.MovieCategory;
@@ -14,6 +15,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import jakarta.persistence.criteria.Predicate;
@@ -44,6 +47,7 @@ public class MovieService {
         movie.setSub_title(movie.getSub_title());
         movie.setAge_type(movie.getAge_type());
         movie.setType(movie.getType());
+        movie.setIs_active(movie.getIs_active());
         movie = movieRepository.save(movie);
 
 
@@ -55,9 +59,10 @@ public class MovieService {
         }
         return movie;}
 
-    public Movie updateMovie(Movie movie, int id) {
+    public Movie updateMovie(UpdateMovieRequest movie, int id) {
         Optional<Movie> optionalExistMovie = movieRepository.findById((long) id);
             Movie existMovie = optionalExistMovie.get();
+        System.out.println("new movie: " + movie);
             existMovie.setBackground_img_url(movie.getBackground_img_url());
             existMovie.setTitle_img_url(movie.getTitle_img_url());
             existMovie.setTitle(movie.getTitle());
@@ -68,6 +73,7 @@ public class MovieService {
             existMovie.setSub_title(movie.getSub_title());
             existMovie.setAge_type(movie.getAge_type());
             existMovie.setType(movie.getType());
+            existMovie.setIs_active(movie.getIs_active());
             existMovie = movieRepository.save(existMovie);
 
         movieCategoryRepository.deleteAllByMovieId(id);
@@ -108,13 +114,29 @@ public class MovieService {
             }
             return predicate;
         };
-        if (sortBy.equals("title")) {
-            return movieRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
-        }
-        if (sortBy.equals("type"))  {
-            return movieRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "type")));
-        }
         return movieRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, sortBy)));
     }
 
+    public List<Movie> getAllMoviesByReleasedDate(String filter) {
+        JsonNode filterJson;
+        try {
+            filterJson = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        Specification<Movie> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            if (filterJson.has("released_date")) {
+                String inputDateStr = filterJson.get("released_date").asText();
+                LocalDate inputDate = LocalDate.parse(inputDateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThanOrEqualTo(root.get("released_date"), inputDate));
+            }
+            if (filterJson.has("is_active")) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("is_active"), filterJson.get("is_active").asText()));
+            }
+            return predicate;
+        };
+        return movieRepository.findAll(specification);
+    }
 }

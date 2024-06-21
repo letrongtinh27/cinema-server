@@ -17,10 +17,10 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "show_time_id", nullable = false)
     private ShowTime showTime;
     @OneToOne
