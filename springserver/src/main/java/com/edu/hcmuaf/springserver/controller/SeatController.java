@@ -50,6 +50,7 @@ public class SeatController {
                 }
             }
             List<SeatResponse> result = new ArrayList<>(idMap.values());
+            result.sort(new SeatResponse());
 
             return ResponseEntity.ok(result);
 

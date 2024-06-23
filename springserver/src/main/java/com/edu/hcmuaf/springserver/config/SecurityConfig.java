@@ -61,7 +61,6 @@ public class SecurityConfig {
 //                      Ticket
                                 .requestMatchers(HttpMethod.GET, "/api/tickets/get/**").hasAnyAuthority("admin", "user", "manager")
                                 .requestMatchers(HttpMethod.GET, "/api/tickets/**").hasAnyAuthority("admin","manager")
-
                                 .requestMatchers(HttpMethod.POST, "/api/tickets/").hasAnyAuthority("admin")
                                 .requestMatchers(HttpMethod.PUT, "/api/tickets/{id}").hasAnyAuthority("admin")
                                 .requestMatchers(HttpMethod.DELETE, "/api/tickets/{id}").hasAnyAuthority("admin")
